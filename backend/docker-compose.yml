@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17
+    container_name: devcore-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-devcore_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devcore_password}
+      POSTGRES_DB: ${POSTGRES_DB:-devcore_db}
+    ports:
+      - "${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devcore_user} -d ${POSTGRES_DB:-devcore_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
