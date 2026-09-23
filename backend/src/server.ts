@@ -1,19 +1,20 @@
 import express, { type Request, type Response } from "express";
 import { PORT } from "./constant.js";
 import { globalErrorHandler } from "./middlewares/error.middleware.js";
-import { ApiResponse } from "./utils/api-response.js";
+import userRouter from "./modules/user/user.routes.js";
 import { ApiError } from "./utils/api-error.js";
+import { ApiResponse } from "./utils/api-response.js";
 
 const app = express();
 
-// Middlewares
+// Request Body Parsing Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Root Route
+// Base / Root Route
 app.get("/", (_req: Request, res: Response) => {
     res.status(200).json(
-        new ApiResponse(200, null, "DevCore API is running")
+        new ApiResponse(200, null, "DevCore API is running smoothly")
     );
 });
 
@@ -23,6 +24,9 @@ app.get("/health", (_req: Request, res: Response) => {
         new ApiResponse(200, { status: "ok" }, "Server is healthy")
     );
 });
+
+// User & Authentication Routes
+app.use("/api/v1/user", userRouter);
 
 // 404 Not Found Handler
 app.use((req: Request, _res: Response, next) => {
